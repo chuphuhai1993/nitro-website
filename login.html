@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nitro - Trang Chủ</title>
+    <title>Login - Nitro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="main/css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
     <script src="main/js/script.js" defer></script>
     <base href="/nitro-website/">
 </head>
 <body class="bg-gray-100 font-sans">
 <header class="bg-gray-800 text-white text-center py-4">
-    <h1 class="text-3xl font-bold">Chào mừng đến với Nitro</h1>
+    <h1 class="text-3xl font-bold">Chào mừng đến với Nitro - Login</h1>
     <nav class="mt-2">
         <a href="/" class="text-white hover:underline mx-4">Trang Chủ</a>
         <a href="/led/" class="text-white hover:underline mx-4">LED Banner</a>
@@ -20,8 +22,14 @@
         <a href="/account" class="text-white hover:underline mx-4">Account</a>
     </nav>
 </header>
-<main class="mt-6 text-center">
-    <p class="text-lg">Đây là trang chính của nitro.com.</p>
+<main class="mt-6 max-w-md mx-auto">
+    <h2 class="text-2xl font-semibold mb-4 text-center">Đăng nhập</h2>
+    <div class="bg-white p-4 rounded shadow">
+        <input id="email" type="email" placeholder="Email" class="w-full p-2 mb-2 border">
+        <input id="password" type="password" placeholder="Mật khẩu" class="w-full p-2 mb-2 border">
+        <button id="sign-in-btn" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Đăng nhập</button>
+        <p id="error-message" class="text-red-500 mt-2 hidden"></p>
+    </div>
 </main>
 </body>
 </html>
