@@ -1,12 +1,9 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, where, orderBy, serverTimestamp, deleteDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Trang chủ nitro.com loaded - DOM ready");
-
-  // Check if firebase is loaded
-  if (typeof firebase === 'undefined') {
-    console.error("Firebase SDK not loaded");
-    alert("Lỗi: Firebase SDK chưa được tải. Vui lòng kiểm tra kết nối mạng hoặc file HTML.");
-    return;
-  }
 
   const firebaseConfig = {
     apiKey: "AIzaSyAz_ck88CPTERdVZgjWvJm7MCMBbMlyq_Y",
@@ -14,15 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     projectId: "nitro-website-5b791",
     storageBucket: "nitro-website-5b791.firebasestorage.app",
     messagingSenderId: "994553595303",
-    appId: "1:994553595303:web:ba1988b21ffc0f13366282"
+    appId: "1:994553595303:web:ba1988b21ffc0f13366282",
   };
 
   // Initialize Firebase
   let app, auth, db;
   try {
-    app = firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    db = firebase.firestore();
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
     console.log("Firebase initialized successfully:", app.name, "Auth object:", auth);
   } catch (error) {
     console.error("Firebase initialization failed:", error.code, error.message);
@@ -31,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Handle Authentication State
-  auth.onAuthStateChanged((user) => {
+  onAuthStateChanged(auth, (user) => {
     console.log("Auth state changed:", user ? user.email : "No user");
     const userInfo = document.getElementById('user-info');
     const signOutBtn = document.getElementById('sign-out-btn');
@@ -90,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      auth.signInWithEmailAndPassword(email, password)
+      signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log("Sign-in successful:", userCredential.user.email);
           window.location.href = 'account';
@@ -133,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signOutBtn.addEventListener('click', () => {
       console.log("Attempting sign-out");
       if (auth) {
-        auth.signOut()
+        signOut(auth)
           .then(() => {
             console.log("Sign-out successful");
             window.location.href = 'login';
@@ -180,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       console.log("Creating/updating post with slug:", slug);
-      db.collection('posts').doc(slug).set({
+      setDoc(doc(db, 'posts', slug), {
         title,
         description,
         coverImage,
@@ -188,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         content,
         author: user.email,
         uid: user.uid,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: serverTimestamp()
       })
       .then(() => {
         console.log("Post created/updated successfully");
@@ -214,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     postsList.innerHTML = 'Đang tải bài viết...';
     console.log("Loading all posts");
 
-    db.collection('posts').orderBy('createdAt', 'desc').get()
+    getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc')))
       .then((querySnapshot) => {
         postsList.innerHTML = '';
         querySnapshot.forEach((doc) => {
@@ -248,10 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     console.log("Loading post detail for slug:", slug);
-    db.collection('posts').doc(slug).get()
-      .then((doc) => {
-        if (doc.exists) {
-          const post = doc.data();
+    getDoc(doc(db, 'posts', slug))
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const post = docSnap.data();
           postDetail.innerHTML = `
             <h2 class="text-2xl font-bold mb-4">${post.title}</h2>
             ${post.coverImage ? `<img src="${post.coverImage}" alt="${post.title}" class="w-full h-64 object-cover mb-4 rounded">` : ''}
@@ -279,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
     userPostsList.innerHTML = 'Đang tải bài viết của bạn...';
     console.log("Loading user posts for UID:", uid);
 
-    db.collection('posts').where('uid', '==', uid).orderBy('createdAt', 'desc').get()
+    getDocs(query(collection(db, 'posts'), where('uid', '==', uid), orderBy('createdAt', 'desc')))
       .then((querySnapshot) => {
         userPostsList.innerHTML = '';
         querySnapshot.forEach((doc) => {
@@ -309,10 +306,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Edit post (redirect to create-post with pre-filled data)
   function editPost(slug) {
     console.log("Editing post with slug:", slug);
-    db.collection('posts').doc(slug).get()
-      .then((doc) => {
-        if (doc.exists) {
-          const post = doc.data();
+    getDoc(doc(db, 'posts', slug))
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const post = docSnap.data();
           localStorage.setItem('editPost', JSON.stringify({ ...post, slug }));
           window.location.href = 'create-post';
           console.log("Post data loaded for editing");
@@ -328,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function deletePost(slug) {
     if (confirm('Bạn có chắc muốn xóa bài viết này?')) {
       console.log("Deleting post with slug:", slug);
-      db.collection('posts').doc(slug).delete()
+      deleteDoc(doc(db, 'posts', slug))
         .then(() => {
           console.log("Post deleted successfully");
           alert("Bài viết đã được xóa!");
