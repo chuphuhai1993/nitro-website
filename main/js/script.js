@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     app = firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
-    console.log("Firebase initialized successfully:", app.name);
+    console.log("Firebase initialized successfully:", app.name, "Auth object:", auth);
   } catch (error) {
-    console.error("Firebase initialization failed:", error.message);
+    console.error("Firebase initialization failed:", error.code, error.message);
     alert("Lỗi khởi tạo Firebase: " + error.message);
     return;
   }
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         querySnapshot.forEach((doc) => {
           const post = doc.data();
           const postElement = document.createElement('div');
-          postElement.className = 'bg-white p-4 rounded shadow';
+          postElement.className = 'bg-gray-100 p-4 rounded shadow';
           postElement.innerHTML = `
             <h3 class="text-xl font-bold"><a href="articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a></h3>
             <p class="text-gray-700">${post.description}</p>
