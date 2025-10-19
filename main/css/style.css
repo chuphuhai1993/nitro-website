@@ -1,0 +1,4 @@
+/* Tùy chỉnh thêm cho trang chủ nếu cần */
+.header-custom {
+  border-bottom: 2px solid #fff;
+}
