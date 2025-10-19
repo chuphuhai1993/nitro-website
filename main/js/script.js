@@ -1,6 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Trang chủ nitro.com loaded - DOM ready");
 
+  // Check if firebase is loaded
+  if (typeof firebase === 'undefined') {
+    console.error("Firebase SDK not loaded");
+    alert("Lỗi: Firebase SDK chưa được tải. Vui lòng kiểm tra kết nối mạng hoặc file HTML.");
+    return;
+  }
+
   const firebaseConfig = {
     apiKey: "AIzaSyAz_ck88CPTERdVZgjWvJm7MCMBbMlyq_Y",
     authDomain: "nitro-website-5b791.firebaseapp.com",
