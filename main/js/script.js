@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("Trang chủ nitro.com loaded");
+  console.log("Trang chủ nitro.com loaded - DOM ready");
 
   const firebaseConfig = {
     apiKey: "AIzaSyAz_ck88CPTERdVZgjWvJm7MCMBbMlyq_Y",
@@ -7,19 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
     projectId: "nitro-website-5b791",
     storageBucket: "nitro-website-5b791.firebasestorage.app",
     messagingSenderId: "994553595303",
-    appId: "1:994553595303:web:ba1988b21ffc0f13366282",
-    measurementId: "G-8HVN0SYC7C"
+    appId: "1:994553595303:web:ba1988b21ffc0f13366282"
   };
 
   // Initialize Firebase
+  let app, auth, db;
   try {
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const analytics = getAnalytics(app);
-    console.log("Firebase initialized successfully");
+    app = firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    console.log("Firebase initialized successfully:", app.name);
   } catch (error) {
-    console.error("Firebase initialization failed:", error);
+    console.error("Firebase initialization failed:", error.message);
+    alert("Lỗi khởi tạo Firebase: " + error.message);
     return;
   }
 
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const authSection = document.getElementById('auth-section');
 
     if (user) {
-      // User signed in
       if (userInfo) userInfo.textContent = `Xin chào, ${user.email}`;
       if (signOutBtn) signOutBtn.classList.remove('hidden');
       if (createPostBtn) createPostBtn.classList.remove('hidden');
@@ -43,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadUserPosts(user.uid);
       }
     } else {
-      // No user signed in
       if (userInfo) userInfo.textContent = 'Vui lòng đăng nhập để tiếp tục';
       if (signOutBtn) signOutBtn.classList.add('hidden');
       if (createPostBtn) createPostBtn.classList.add('hidden');
@@ -62,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Sign-in button found, attaching event listener");
     signInBtn.addEventListener('click', () => {
       console.log("Sign-in button clicked");
-      const email = document.getElementById('email')?.value;
-      const password = document.getElementById('password')?.value;
+      const email = document.getElementById('email')?.value.trim();
+      const password = document.getElementById('password')?.value.trim();
       const errorMessage = document.getElementById('error-message');
 
       if (!email || !password) {
@@ -71,11 +69,20 @@ document.addEventListener('DOMContentLoaded', () => {
           errorMessage.classList.remove('hidden');
           errorMessage.textContent = 'Vui lòng nhập email và mật khẩu!';
         }
-        console.log("Missing email or password");
+        console.log("Missing or empty email/password");
         return;
       }
 
       console.log("Attempting sign-in with email:", email);
+      if (!auth) {
+        console.error("Auth not initialized");
+        if (errorMessage) {
+          errorMessage.classList.remove('hidden');
+          errorMessage.textContent = 'Lỗi: Firebase Authentication chưa khởi tạo.';
+        }
+        return;
+      }
+
       auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           console.log("Sign-in successful:", userCredential.user.email);
@@ -99,6 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
               case 'auth/invalid-credential':
                 message += 'Thông tin đăng nhập không hợp lệ.';
                 break;
+              case 'auth/operation-not-allowed':
+                message += 'Phương thức đăng nhập không được bật.';
+                break;
               default:
                 message += error.message;
             }
@@ -107,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
   } else {
-    console.warn("Sign-in button not found");
+    console.warn("Sign-in button not found in DOM");
   }
 
   // Sign out
@@ -115,15 +125,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (signOutBtn) {
     signOutBtn.addEventListener('click', () => {
       console.log("Attempting sign-out");
-      auth.signOut()
-        .then(() => {
-          console.log("Sign-out successful");
-          window.location.href = 'login';
-        })
-        .catch((error) => {
-          console.error("Sign-out failed:", error);
-          alert("Lỗi đăng xuất: " + error.message);
-        });
+      if (auth) {
+        auth.signOut()
+          .then(() => {
+            console.log("Sign-out successful");
+            window.location.href = 'login';
+          })
+          .catch((error) => {
+            console.error("Sign-out failed:", error);
+            alert("Lỗi đăng xuất: " + error.message);
+          });
+      } else {
+        console.error("Auth not initialized for sign-out");
+      }
     });
   }
 
@@ -132,11 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (createPostBtn) {
     createPostBtn.addEventListener('click', () => {
       console.log("Create post button clicked");
-      const title = document.getElementById('post-title')?.value;
-      const description = document.getElementById('post-description')?.value;
-      const coverImage = document.getElementById('post-cover')?.value;
-      const slug = document.getElementById('post-slug')?.value;
-      const content = document.getElementById('post-content')?.value;
+      const title = document.getElementById('post-title')?.value.trim();
+      const description = document.getElementById('post-description')?.value.trim();
+      const coverImage = document.getElementById('post-cover')?.value.trim();
+      const slug = document.getElementById('post-slug')?.value.trim();
+      const content = document.getElementById('post-content')?.value.trim();
       const errorMessage = document.getElementById('error-message');
       const user = auth.currentUser;
 
@@ -146,6 +160,15 @@ document.addEventListener('DOMContentLoaded', () => {
           errorMessage.textContent = 'Vui lòng nhập đầy đủ thông tin!';
         }
         console.log("Missing post fields");
+        return;
+      }
+
+      if (!user) {
+        if (errorMessage) {
+          errorMessage.classList.remove('hidden');
+          errorMessage.textContent = 'Vui lòng đăng nhập để tạo bài viết!';
+        }
+        console.log("User not authenticated");
         return;
       }
 
