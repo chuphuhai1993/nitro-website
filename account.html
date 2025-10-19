@@ -6,15 +6,15 @@
     <title>Account - Nitro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="main/css/style.css">
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
-    <script src="main/js/script.js" defer></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+    <script type="module" src="main/js/script.js"></script>
     <base href="/nitro-website/">
 </head>
 <body class="bg-gray-100 font-sans">
 <header class="bg-gray-800 text-white text-center py-4">
-    <h1 class="text-3xl font-bold">Chào mừng đến với Nitro - Account</h1>
+    <h1 class="text-3xl font-bold">Tài khoản - Nitro</h1>
     <nav class="mt-2">
         <a href="" class="text-white hover:underline mx-4">Trang Chủ</a>
         <a href="led/" class="text-white hover:underline mx-4">LED Banner</a>
@@ -23,14 +23,10 @@
         <a href="account" class="text-white hover:underline mx-4">Account</a>
     </nav>
 </header>
-<main class="mt-6 max-w-3xl mx-auto">
-    <div id="auth-section" class="mb-6">
-        <p id="user-info" class="text-lg text-center"></p>
-        <button id="create-post-btn" class="bg-blue-500 text-white px-4 py-2 rounded hidden">Tạo bài viết</button>
-        <button id="sign-out-btn" class="bg-red-500 text-white px-4 py-2 rounded hidden">Đăng xuất</button>
-    </div>
-    <h2 class="text-2xl font-semibold mb-4 text-center">Bài viết của bạn</h2>
-    <div id="user-posts-list" class="space-y-4"></div>
+<main class="mt-6 max-w-2xl mx-auto">
+    <div id="user-info" class="text-2xl font-semibold mb-4"></div>
+    <button id="sign-out-btn" class="bg-red-500 text-white px-4 py-2 rounded hidden">Đăng xuất</button>
+    <div id="user-posts-list" class="mt-4"></div>
 </main>
 </body>
 </html>
