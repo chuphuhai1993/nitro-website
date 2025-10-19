@@ -40,10 +40,10 @@ auth.onAuthStateChanged((user) => {
     if (signOutBtn) signOutBtn.classList.add('hidden');
     if (createPostBtn) createPostBtn.classList.add('hidden');
     if (authSection && window.location.pathname.includes('/create-post')) {
-      window.location.href = '/nitro-website/login';
+      window.location.href = 'login';
     }
     if (window.location.pathname.includes('/account')) {
-      window.location.href = '/nitro-website/login';
+      window.location.href = 'login';
     }
   }
 });
@@ -56,7 +56,7 @@ document.getElementById('sign-in-btn')?.addEventListener('click', () => {
 
   auth.signInWithEmailAndPassword(email, password)
     .then(() => {
-      window.location.href = '/nitro-website/account';
+      window.location.href = 'account';
     })
     .catch((error) => {
       errorMessage.classList.remove('hidden');
@@ -68,7 +68,7 @@ document.getElementById('sign-in-btn')?.addEventListener('click', () => {
 document.getElementById('sign-out-btn')?.addEventListener('click', () => {
   auth.signOut()
     .then(() => {
-      window.location.href = '/nitro-website/login';
+      window.location.href = 'login';
     })
     .catch((error) => {
       alert("Lỗi đăng xuất: " + error.message);
@@ -104,7 +104,7 @@ document.getElementById('create-post-btn')?.addEventListener('click', () => {
   .then(() => {
     alert("Bài viết đã được tạo/cập nhật!");
     localStorage.removeItem('editPost');
-    window.location.href = '/nitro-website/account';
+    window.location.href = 'account';
   })
   .catch((error) => {
     errorMessage.classList.remove('hidden');
@@ -127,7 +127,7 @@ function loadPosts() {
         const postElement = document.createElement('div');
         postElement.className = 'bg-white p-4 rounded shadow';
         postElement.innerHTML = `
-          <h3 class="text-xl font-bold"><a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a></h3>
+          <h3 class="text-xl font-bold"><a href="articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a></h3>
           <p class="text-gray-700">${post.description}</p>
           <p class="text-sm text-gray-500">Tác giả: ${post.author}</p>
         `;
@@ -188,7 +188,7 @@ function loadUserPosts(uid) {
         postElement.className = 'bg-white p-4 rounded shadow flex justify-between items-center';
         postElement.innerHTML = `
           <div>
-            <h3 class="text-xl font-bold"><a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a></h3>
+            <h3 class="text-xl font-bold"><a href="articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a></h3>
             <p class="text-gray-700">${post.description}</p>
           </div>
           <div>
@@ -212,7 +212,7 @@ function editPost(slug) {
       if (doc.exists) {
         const post = doc.data();
         localStorage.setItem('editPost', JSON.stringify({ ...post, slug }));
-        window.location.href = '/nitro-website/create-post';
+        window.location.href = 'create-post';
       }
     })
     .catch((error) => {
