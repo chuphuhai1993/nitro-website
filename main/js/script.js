@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
           postElement.className = 'bg-white p-4 rounded shadow mb-4';
           postElement.innerHTML = `
             <h3 class="text-xl font-bold mb-2">
-              <a href="${window.location.origin}/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
+              <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
             </h3>
             <p class="text-gray-700 mb-2">${post.description}</p>
             <p class="text-sm text-gray-500">Tác giả: ${post.author}</p>
@@ -255,6 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!slug) {
       postDetail.innerHTML = 'Bài viết không tồn tại.';
       console.log("No slug found in URL");
+      return;
+    }
+
+    // Redirect nếu không đúng path
+    const expectedPath = `/nitro-website/articles/${slug}`;
+    if (window.location.pathname !== expectedPath) {
+      console.log("Redirecting to correct path:", expectedPath);
+      window.location.href = expectedPath;
       return;
     }
 
@@ -306,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
           postElement.innerHTML = `
             <div>
               <h3 class="text-xl font-bold mb-2">
-                <a href="${window.location.origin}/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
+                <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
               </h3>
               <p class="text-gray-700">${post.description}</p>
             </div>
