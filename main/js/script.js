@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Handle Authentication State
+  // Handle Authentication State (đồng bộ cho mọi trang)
   onAuthStateChanged(auth, (user) => {
     console.log("Auth state changed:", user ? user.email : "No user");
     const userInfo = document.getElementById('user-info');
@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const authSection = document.getElementById('auth-section');
     const accountLink = document.querySelector('a[href="/nitro-website/account"]');
     const loginLink = document.querySelector('a[href="/nitro-website/login"]');
+    const navLinks = document.querySelectorAll('header nav a'); // Lấy tất cả link trong nav
+
+    // Hiển thị tất cả link sau khi xác định auth state
+    navLinks.forEach(link => link.classList.add('visible'));
 
     if (user) {
       if (userInfo) userInfo.textContent = `Xin chào, ${user.email}`;
@@ -52,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // Xử lý trang login khi đã đăng nhập
       if (window.location.pathname.includes('/login')) {
-        const mainContent = document.querySelector('main');
+        const mainContent = document.getElementById('login-main') || document.querySelector('main');
         if (mainContent) {
           mainContent.innerHTML = '<div class="bg-white p-4 rounded shadow text-center"><p class="text-gray-700">Bạn đã đăng nhập!</p><a href="/nitro-website/account" class="text-blue-600 hover:underline">Đi đến tài khoản</a></div>';
         }

@@ -2,3 +2,16 @@
 .header-custom {
   border-bottom: 2px solid #fff;
 }
+
+header nav a {
+  display: none; /* Ẩn tất cả link ban đầu */
+}
+
+header nav a.visible {
+  display: inline-block; /* Hiển thị khi có class 'visible' */
+}
+
+/* Lớp hidden để đồng bộ với logic JS */
+.hidden {
+  display: none;
+}
