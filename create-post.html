@@ -12,26 +12,16 @@
     <script type="module" src="main/js/script.js"></script>
 </head>
 <body class="bg-gray-100 font-sans">
-<header class="bg-gray-800 text-white text-center py-4">
-    <h1 class="text-3xl font-bold">Chào mừng đến với Nitro - Create Post</h1>
-    <nav class="mt-2">
-        <a href="/nitro-website/" class="text-white hover:underline mx-4">Trang Chủ</a>
-        <a href="/nitro-website/led/" class="text-white hover:underline mx-4">LED Banner</a>
-        <a href="/nitro-website/articles" class="text-white hover:underline mx-4">Articles</a>
-        <a href="/nitro-website/login" class="text-white hover:underline mx-4">Login</a>
-        <a href="/nitro-website/account" class="text-white hover:underline mx-4">Account</a>
-    </nav>
-</header>
-<main class="mt-6 max-w-3xl mx-auto">
-    <div id="auth-section" class="bg-white p-4 rounded shadow">
-        <h2 class="text-2xl font-semibold mb-4">Tạo bài viết mới</h2>
-        <input id="post-title" type="text" placeholder="Tiêu đề" class="w-full p-2 mb-2 border">
-        <input id="post-description" type="text" placeholder="Mô tả" class="w-full p-2 mb-2 border">
-        <input id="post-cover" type="url" placeholder="Link ảnh cover" class="w-full p-2 mb-2 border">
-        <input id="post-slug" type="text" placeholder="Slug (ví dụ: my-first-post)" class="w-full p-2 mb-2 border">
-        <textarea id="post-content" placeholder="Nội dung bài viết" class="w-full p-2 mb-2 border h-32"></textarea>
-        <button id="create-post-btn" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Đăng bài</button>
-        <p id="error-message" class="text-red-500 mt-2 hidden"></p>
+<main class="mt-6 max-w-2xl mx-auto" id="auth-section" class="hidden">
+    <div class="bg-white p-4 rounded shadow">
+        <p class="text-center text-gray-700">Tạo bài viết mới</p>
+        <input type="text" id="post-title" placeholder="Tiêu đề" class="w-full p-2 mb-2 border rounded">
+        <input type="text" id="post-description" placeholder="Mô tả" class="w-full p-2 mb-2 border rounded">
+        <input type="text" id="post-cover" placeholder="Link ảnh bìa" class="w-full p-2 mb-2 border rounded">
+        <input type="text" id="post-slug" placeholder="Slug" class="w-full p-2 mb-2 border rounded">
+        <textarea id="post-content" placeholder="Nội dung" class="w-full p-2 mb-2 border rounded" rows="5"></textarea>
+        <button id="create-post-btn" class="bg-green-500 text-white px-4 py-2 rounded">Tạo bài viết</button>
+        <p id="error-message" class="text-red-500 hidden mt-2"></p>
     </div>
 </main>
 </body>

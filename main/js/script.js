@@ -28,7 +28,29 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Handle Authentication State (đồng bộ cho mọi trang)
+  // Inject header and footer (chỉ cho các trang cần đồng bộ)
+  const pagesToSync = [
+    '/nitro-website/',
+    '/nitro-website/articles',
+    '/nitro-website/login',
+    '/nitro-website/account',
+    '/nitro-website/create-post'
+  ];
+  if (pagesToSync.some(path => window.location.pathname.startsWith(path))) {
+    const headerContainer = document.createElement('div');
+    headerContainer.innerHTML = fetch('/nitro-website/header.html').then(response => response.text()).then(html => {
+      document.body.insertAdjacentHTML('afterbegin', html);
+      return html;
+    }).catch(error => console.error('Error loading header:', error));
+
+    const footerContainer = document.createElement('div');
+    footerContainer.innerHTML = fetch('/nitro-website/footer.html').then(response => response.text()).then(html => {
+      document.body.insertAdjacentHTML('beforeend', html);
+      return html;
+    }).catch(error => console.error('Error loading footer:', error));
+  }
+
+  // Handle Authentication State (đồng bộ cho các trang cần thiết)
   onAuthStateChanged(auth, (user) => {
     console.log("Auth state changed:", user ? user.email : "No user");
     const userInfo = document.getElementById('user-info');
@@ -37,10 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const authSection = document.getElementById('auth-section');
     const accountLink = document.querySelector('a[href="/nitro-website/account"]');
     const loginLink = document.querySelector('a[href="/nitro-website/login"]');
-    const navLinks = document.querySelectorAll('header nav a'); // Lấy tất cả link trong nav
+    const navLinks = document.querySelectorAll('header nav a');
 
     // Hiển thị tất cả link sau khi xác định auth state
-    navLinks.forEach(link => link.classList.add('visible'));
+    if (navLinks.length > 0) {
+      navLinks.forEach(link => link.classList.add('visible'));
+    }
 
     if (user) {
       if (userInfo) userInfo.textContent = `Xin chào, ${user.email}`;
@@ -72,6 +96,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (loginLink) loginLink.classList.remove('hidden');
       if (window.location.pathname.includes('/account')) {
         window.location.href = '/nitro-website/login';
+      }
+    }
+
+    // Đặt tiêu đề động dựa trên trang
+    const pageTitle = document.getElementById('page-title');
+    if (pageTitle) {
+      if (window.location.pathname.includes('/articles')) {
+        pageTitle.textContent = 'Articles - Nitro';
+      } else if (window.location.pathname.includes('/login')) {
+        pageTitle.textContent = 'Login - Nitro';
+      } else if (window.location.pathname.includes('/account')) {
+        pageTitle.textContent = 'Account - Nitro';
+      } else if (window.location.pathname.includes('/create-post')) {
+        pageTitle.textContent = 'Create Post - Nitro';
+      } else if (window.location.pathname === '/nitro-website/' || window.location.pathname === '/nitro-website') {
+        pageTitle.textContent = 'Home - Nitro';
       }
     }
   });
