@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log("Trang chủ nitro.com loaded - DOM ready");
 
   const firebaseConfig = {
-      apiKey: "AIzaSyAz_ck88CPTERdVZgjWvJm7MCMBbMlyq_Y",
-      authDomain: "nitro-website-5b791.firebaseapp.com",
-      projectId: "nitro-website-5b791",
-      storageBucket: "nitro-website-5b791.firebasestorage.app",
-      messagingSenderId: "994553595303",
-      appId: "1:994553595303:web:ba1988b21ffc0f13366282",
+    apiKey: "AIzaSyAz_ck88CPTERdVZgjWvJm7MCMBbMlyq_Y",
+    authDomain: "nitro-website-5b791.firebaseapp.com",
+    projectId: "nitro-website-5b791",
+    storageBucket: "nitro-website-5b791.firebasestorage.app",
+    messagingSenderId: "994553595303",
+    appId: "1:994553595303:web:ba1988b21ffc0f13366282",
   };
 
   // Initialize Firebase
@@ -244,7 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const postDetail = document.getElementById('post-detail');
     if (!postDetail) return;
 
-    const slug = window.location.pathname.split('/').pop();
+    // Lấy slug từ URL, loại bỏ các phần thừa
+    const pathParts = window.location.pathname.split('/');
+    const slug = pathParts.pop() || pathParts.pop(); // Lấy phần cuối cùng
+    console.log("Extracted slug from URL:", slug);
+
     if (!slug) {
       postDetail.innerHTML = 'Bài viết không tồn tại.';
       return;
