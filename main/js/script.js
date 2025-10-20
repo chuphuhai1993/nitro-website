@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
           postElement.className = 'bg-white p-4 rounded shadow mb-4';
           postElement.innerHTML = `
             <h3 class="text-xl font-bold mb-2">
-              <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
+              <a href="/nitro-website/articles.html?slug=${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
             </h3>
             <p class="text-gray-700 mb-2">${post.description}</p>
             <p class="text-sm text-gray-500">Tác giả: ${post.author}</p>
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
-  // Load post detail (for article-detail.html)
+  // Load post detail (for articles.html with query param)
   function loadPostDetail() {
     const postDetail = document.getElementById('post-detail');
     if (!postDetail) {
@@ -247,22 +247,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Lấy slug từ URL, loại bỏ các phần thừa
-    const pathParts = window.location.pathname.split('/');
-    const slug = pathParts.pop() || pathParts.pop(); // Lấy phần cuối cùng
-    console.log("Extracted slug from URL:", slug);
+    // Lấy slug từ query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+    console.log("Extracted slug from query:", slug);
 
     if (!slug) {
-      postDetail.innerHTML = 'Bài viết không tồn tại.';
-      console.log("No slug found in URL");
-      return;
-    }
-
-    // Redirect nếu không đúng path
-    const expectedPath = `/nitro-website/articles/${slug}`;
-    if (window.location.pathname !== expectedPath) {
-      console.log("Redirecting to correct path:", expectedPath);
-      window.location.href = expectedPath;
+      postDetail.innerHTML = 'Bài viết không tồn tại hoặc slug không hợp lệ.';
+      console.log("No slug found in query");
       return;
     }
 
@@ -314,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
           postElement.innerHTML = `
             <div>
               <h3 class="text-xl font-bold mb-2">
-                <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
+                <a href="/nitro-website/articles.html?slug=${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
               </h3>
               <p class="text-gray-700">${post.description}</p>
             </div>
@@ -381,9 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (window.location.pathname.includes('/articles') && !window.location.pathname.includes('/articles/')) {
+  // Chạy loadPosts hoặc loadPostDetail dựa trên URL
+  if (window.location.pathname === '/nitro-website/articles' || window.location.pathname === '/nitro-website/articles/') {
     loadPosts();
-  } else if (window.location.pathname.includes('/articles/')) {
+  } else if (window.location.search.includes('slug=')) {
     loadPostDetail();
   }
 });

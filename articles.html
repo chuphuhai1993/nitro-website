@@ -10,7 +10,6 @@
     <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
     <script type="module" src="main/js/script.js"></script>
-    <!-- Loại bỏ <base> -->
 </head>
 <body class="bg-gray-100 font-sans">
 <header class="bg-gray-800 text-white text-center py-4">
@@ -25,6 +24,14 @@
 </header>
 <main class="mt-6 max-w-2xl mx-auto">
     <div id="posts-list" class="space-y-4"></div>
+    <script>
+        // Redirect nếu có slug
+        const path = window.location.pathname;
+        if (path.includes('/nitro-website/articles/') && path !== '/nitro-website/articles/') {
+          const slug = path.split('/').pop();
+          window.location.href = `/nitro-website/articles.html?slug=${slug}`;
+        }
+    </script>
 </main>
 </body>
 </html>
