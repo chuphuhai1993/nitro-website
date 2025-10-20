@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
-    console.log("Firebase initialized successfully:", app.name, "Auth object:", auth);
+    console.log("Firebase initialized successfully:", app.name);
   } catch (error) {
-    console.error("Firebase initialization failed:", error.code, error.message);
+    console.error("Firebase initialization failed:", error);
     alert("Lỗi khởi tạo Firebase: " + error.message);
     return;
   }
@@ -50,10 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (signOutBtn) signOutBtn.classList.add('hidden');
       if (createPostBtn) createPostBtn.classList.add('hidden');
       if (authSection && window.location.pathname.includes('/create-post')) {
-        window.location.href = 'login';
+        window.location.href = '/nitro-website/login';
       }
       if (window.location.pathname.includes('/account')) {
-        window.location.href = 'login';
+        window.location.href = '/nitro-website/login';
       }
     }
   });
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log("Sign-in successful:", userCredential.user.email);
-          window.location.href = 'account';
+          window.location.href = '/nitro-website/account';
         })
         .catch((error) => {
           console.error("Sign-in failed:", error.code, error.message);
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         signOut(auth)
           .then(() => {
             console.log("Sign-out successful");
-            window.location.href = 'login';
+            window.location.href = '/nitro-website/login';
           })
           .catch((error) => {
             console.error("Sign-out failed:", error);
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Post created/updated successfully");
         alert("Bài viết đã được tạo/cập nhật!");
         localStorage.removeItem('editPost');
-        window.location.href = 'account';
+        window.location.href = '/nitro-website/account';
       })
       .catch((error) => {
         console.error("Post creation failed:", error);
@@ -205,127 +205,127 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load all posts (for articles.html)
   function loadPosts() {
-      const postsList = document.getElementById('posts-list');
-      if (!postsList) return;
+    const postsList = document.getElementById('posts-list');
+    if (!postsList) return;
 
-      postsList.innerHTML = 'Đang tải bài viết...';
-      console.log("Loading all posts");
+    postsList.innerHTML = 'Đang tải bài viết...';
+    console.log("Loading all posts");
 
-      getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc')))
-        .then((querySnapshot) => {
-          postsList.innerHTML = '';
-          if (querySnapshot.empty) {
-            postsList.innerHTML = '<p class="text-center text-gray-500">Chưa có bài viết nào.</p>';
-            return;
-          }
-          querySnapshot.forEach((doc) => {
-            const post = doc.data();
-            const postElement = document.createElement('div');
-            postElement.className = 'bg-white p-4 rounded shadow mb-4';
-            postElement.innerHTML = `
+    getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc')))
+      .then((querySnapshot) => {
+        postsList.innerHTML = '';
+        if (querySnapshot.empty) {
+          postsList.innerHTML = '<p class="text-center text-gray-500">Chưa có bài viết nào.</p>';
+          return;
+        }
+        querySnapshot.forEach((doc) => {
+          const post = doc.data();
+          const postElement = document.createElement('div');
+          postElement.className = 'bg-white p-4 rounded shadow mb-4';
+          postElement.innerHTML = `
+            <h3 class="text-xl font-bold mb-2">
+              <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
+            </h3>
+            <p class="text-gray-700 mb-2">${post.description}</p>
+            <p class="text-sm text-gray-500">Tác giả: ${post.author}</p>
+          `;
+          postsList.appendChild(postElement);
+        });
+        console.log("Posts loaded successfully");
+      })
+      .catch((error) => {
+        postsList.innerHTML = 'Lỗi khi tải bài viết.';
+        console.error("Error loading posts:", error);
+      });
+  }
+
+  // Load post detail (for article-detail.html)
+  function loadPostDetail() {
+    const postDetail = document.getElementById('post-detail');
+    if (!postDetail) return;
+
+    const slug = window.location.pathname.split('/').pop();
+    if (!slug) {
+      postDetail.innerHTML = 'Bài viết không tồn tại.';
+      return;
+    }
+
+    console.log("Loading post detail for slug:", slug);
+    getDoc(doc(db, 'posts', slug))
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const post = docSnap.data();
+          postDetail.innerHTML = `
+            <div class="bg-white p-4 rounded shadow">
+              <h2 class="text-2xl font-bold mb-4">${post.title}</h2>
+              ${post.coverImage ? `<img src="${post.coverImage}" alt="${post.title}" class="w-full h-64 object-cover mb-4 rounded">` : ''}
+              <p class="text-gray-700 mb-4">${post.description}</p>
+              <div class="prose max-w-none">${post.content}</div>
+              <p class="text-sm text-gray-500 mt-4">Tác giả: ${post.author}</p>
+            </div>
+          `;
+          console.log("Post detail loaded successfully");
+        } else {
+          postDetail.innerHTML = 'Bài viết không tồn tại.';
+          console.log("Post not found for slug:", slug);
+        }
+      })
+      .catch((error) => {
+        postDetail.innerHTML = 'Lỗi khi tải bài viết.';
+        console.error("Error loading post:", error);
+      });
+  }
+
+  // Load user posts (for account.html)
+  function loadUserPosts(uid) {
+    const userPostsList = document.getElementById('user-posts-list');
+    if (!userPostsList) return;
+
+    userPostsList.innerHTML = 'Đang tải bài viết của bạn...';
+    console.log("Loading user posts for UID:", uid);
+
+    getDocs(query(collection(db, 'posts'), where('uid', '==', uid), orderBy('createdAt', 'desc')))
+      .then((querySnapshot) => {
+        userPostsList.innerHTML = '';
+        if (querySnapshot.empty) {
+          userPostsList.innerHTML = '<p class="text-center text-gray-500">Bạn chưa có bài viết nào.</p>';
+          return;
+        }
+        querySnapshot.forEach((doc) => {
+          const post = doc.data();
+          const postElement = document.createElement('div');
+          postElement.className = 'bg-white p-4 rounded shadow flex justify-between items-center mb-4';
+          postElement.innerHTML = `
+            <div>
               <h3 class="text-xl font-bold mb-2">
                 <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
               </h3>
-              <p class="text-gray-700 mb-2">${post.description}</p>
-              <p class="text-sm text-gray-500">Tác giả: ${post.author}</p>
-            `;
-            postsList.appendChild(postElement);
-          });
-          console.log("Posts loaded successfully");
-        })
-        .catch((error) => {
-          postsList.innerHTML = 'Lỗi khi tải bài viết.';
-          console.error("Error loading posts:", error);
+              <p class="text-gray-700">${post.description}</p>
+            </div>
+            <div>
+              <button onclick="editPost('${post.slug}')" class="bg-yellow-500 text-white px-3 py-1 rounded mr-2">Chỉnh sửa</button>
+              <button onclick="deletePost('${post.slug}')" class="bg-red-500 text-white px-3 py-1 rounded">Xóa</button>
+            </div>
+          `;
+          userPostsList.appendChild(postElement);
         });
-    }
-
-    // Load post detail (for article-detail.html)
-    function loadPostDetail() {
-      const postDetail = document.getElementById('post-detail');
-      if (!postDetail) return;
-
-      const slug = window.location.pathname.split('/').pop();
-      if (!slug) {
-        postDetail.innerHTML = 'Bài viết không tồn tại.';
-        return;
-      }
-
-      console.log("Loading post detail for slug:", slug);
-      getDoc(doc(db, 'posts', slug))
-        .then((docSnap) => {
-          if (docSnap.exists()) {
-            const post = docSnap.data();
-            postDetail.innerHTML = `
-              <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-2xl font-bold mb-4">${post.title}</h2>
-                ${post.coverImage ? `<img src="${post.coverImage}" alt="${post.title}" class="w-full h-64 object-cover mb-4 rounded">` : ''}
-                <p class="text-gray-700 mb-4">${post.description}</p>
-                <div class="prose max-w-none">${post.content}</div>
-                <p class="text-sm text-gray-500 mt-4">Tác giả: ${post.author}</p>
-              </div>
-            `;
-            console.log("Post detail loaded successfully");
-          } else {
-            postDetail.innerHTML = 'Bài viết không tồn tại.';
-            console.log("Post not found for slug:", slug);
-          }
-        })
-        .catch((error) => {
-          postDetail.innerHTML = 'Lỗi khi tải bài viết.';
-          console.error("Error loading post:", error);
-        });
-    }
-
-    // Load user posts (for account.html)
-    function loadUserPosts(uid) {
-      const userPostsList = document.getElementById('user-posts-list');
-      if (!userPostsList) return;
-
-      userPostsList.innerHTML = 'Đang tải bài viết của bạn...';
-      console.log("Loading user posts for UID:", uid);
-
-      getDocs(query(collection(db, 'posts'), where('uid', '==', uid), orderBy('createdAt', 'desc')))
-        .then((querySnapshot) => {
-          userPostsList.innerHTML = '';
-          if (querySnapshot.empty) {
-            userPostsList.innerHTML = '<p class="text-center text-gray-500">Bạn chưa có bài viết nào.</p>';
-            return;
-          }
-          querySnapshot.forEach((doc) => {
-            const post = doc.data();
-            const postElement = document.createElement('div');
-            postElement.className = 'bg-white p-4 rounded shadow flex justify-between items-center mb-4';
-            postElement.innerHTML = `
-              <div>
-                <h3 class="text-xl font-bold mb-2">
-                  <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
-                </h3>
-                <p class="text-gray-700">${post.description}</p>
-              </div>
-              <div>
-                <button onclick="editPost('${post.slug}')" class="bg-yellow-500 text-white px-3 py-1 rounded mr-2">Chỉnh sửa</button>
-                <button onclick="deletePost('${post.slug}')" class="bg-red-500 text-white px-3 py-1 rounded">Xóa</button>
-              </div>
-            `;
-            userPostsList.appendChild(postElement);
-          });
-          console.log("User posts loaded successfully");
-        })
-        .catch((error) => {
-          userPostsList.innerHTML = 'Lỗi khi tải bài viết.';
-          console.error("Error loading user posts:", error);
-        });
+        console.log("User posts loaded successfully");
+      })
+      .catch((error) => {
+        userPostsList.innerHTML = 'Lỗi khi tải bài viết.';
+        console.error("Error loading user posts:", error);
+      });
   }
 
   // Edit post (redirect to create-post with pre-filled data)
-  function editPost(slug) {
+  window.editPost = function(slug) {
     console.log("Editing post with slug:", slug);
     getDoc(doc(db, 'posts', slug))
       .then((docSnap) => {
         if (docSnap.exists()) {
           const post = docSnap.data();
           localStorage.setItem('editPost', JSON.stringify({ ...post, slug }));
-          window.location.href = 'create-post';
+          window.location.href = '/nitro-website/create-post';
           console.log("Post data loaded for editing");
         }
       })
@@ -333,10 +333,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Error loading post for edit:", error);
         alert("Lỗi khi tải bài viết: " + error.message);
       });
-  }
+  };
 
   // Delete post
-  function deletePost(slug) {
+  window.deletePost = function(slug) {
     if (confirm('Bạn có chắc muốn xóa bài viết này?')) {
       console.log("Deleting post with slug:", slug);
       deleteDoc(doc(db, 'posts', slug))
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert("Lỗi khi xóa bài viết: " + error.message);
         });
     }
-  }
+  };
 
   // Pre-fill form for editing
   if (window.location.pathname.includes('/create-post')) {
