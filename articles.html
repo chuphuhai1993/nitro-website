@@ -24,14 +24,7 @@
 </header>
 <main class="mt-6 max-w-2xl mx-auto">
     <div id="posts-list" class="space-y-4"></div>
-    <script>
-        // Redirect nếu có slug
-        const path = window.location.pathname;
-        if (path.includes('/nitro-website/articles/') && path !== '/nitro-website/articles/') {
-          const slug = path.split('/').pop();
-          window.location.href = `/nitro-website/articles.html?slug=${slug}`;
-        }
-    </script>
+    <div id="post-detail" class="space-y-4 hidden"></div>
 </main>
 </body>
 </html>

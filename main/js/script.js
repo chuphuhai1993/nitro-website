@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     storageBucket: "nitro-website-5b791.firebasestorage.app",
     messagingSenderId: "994553595303",
     appId: "1:994553595303:web:ba1988b21ffc0f13366282",
+    measurementId: "G-8HVN0SYC7C"
   };
 
   // Initialize Firebase
@@ -258,6 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Ẩn posts-list và hiện post-detail
+    const postsList = document.getElementById('posts-list');
+    if (postsList) postsList.classList.add('hidden');
+    postDetail.classList.remove('hidden');
+
     console.log("Loading post detail for slug:", slug);
     getDoc(doc(db, 'posts', slug))
       .then((docSnap) => {
@@ -270,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="text-gray-700 mb-4">${post.description}</p>
               <div class="prose max-w-none">${post.content}</div>
               <p class="text-sm text-gray-500 mt-4">Tác giả: ${post.author}</p>
+              <a href="/nitro-website/articles" class="text-blue-600 hover:underline mt-4 inline-block">Quay lại danh sách</a>
             </div>
           `;
           console.log("Post detail loaded successfully");
