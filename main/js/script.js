@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const signOutBtn = document.getElementById('sign-out-btn');
     const createPostBtn = document.getElementById('create-post-btn');
     const authSection = document.getElementById('auth-section');
+    const accountLink = document.querySelector('a[href="/nitro-website/account"]');
+    const loginLink = document.querySelector('a[href="/nitro-website/login"]');
 
     if (user) {
       if (userInfo) userInfo.textContent = `Xin chào, ${user.email}`;
@@ -43,8 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (authSection && window.location.pathname.includes('/create-post')) {
         authSection.classList.remove('hidden');
       }
+      if (accountLink) accountLink.classList.remove('hidden');
+      if (loginLink) loginLink.classList.add('hidden');
       if (window.location.pathname.includes('/account')) {
         loadUserPosts(user.uid);
+      }
+      // Xử lý trang login khi đã đăng nhập
+      if (window.location.pathname.includes('/login')) {
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+          mainContent.innerHTML = '<div class="bg-white p-4 rounded shadow text-center"><p class="text-gray-700">Bạn đã đăng nhập!</p><a href="/nitro-website/account" class="text-blue-600 hover:underline">Đi đến tài khoản</a></div>';
+        }
       }
     } else {
       if (userInfo) userInfo.textContent = 'Vui lòng đăng nhập để tiếp tục';
@@ -53,6 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (authSection && window.location.pathname.includes('/create-post')) {
         window.location.href = '/nitro-website/login';
       }
+      if (accountLink) accountLink.classList.add('hidden');
+      if (loginLink) loginLink.classList.remove('hidden');
       if (window.location.pathname.includes('/account')) {
         window.location.href = '/nitro-website/login';
       }
@@ -304,6 +317,13 @@ document.addEventListener('DOMContentLoaded', () => {
         userPostsList.innerHTML = '';
         if (querySnapshot.empty) {
           userPostsList.innerHTML = '<p class="text-center text-gray-500">Bạn chưa có bài viết nào.</p>';
+          const createPostButton = document.createElement('button');
+          createPostButton.textContent = 'Tạo bài viết';
+          createPostButton.className = 'bg-green-500 text-white px-3 py-1 rounded mt-4';
+          createPostButton.addEventListener('click', () => {
+            window.location.href = '/nitro-website/create-post';
+          });
+          userPostsList.appendChild(createPostButton);
           return;
         }
         querySnapshot.forEach((doc) => {
@@ -324,6 +344,13 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
           userPostsList.appendChild(postElement);
         });
+        const createPostButton = document.createElement('button');
+        createPostButton.textContent = 'Tạo bài viết';
+        createPostButton.className = 'bg-green-500 text-white px-3 py-1 rounded mt-4';
+        createPostButton.addEventListener('click', () => {
+          window.location.href = '/nitro-website/create-post';
+        });
+        userPostsList.appendChild(createPostButton);
         console.log("User posts loaded successfully");
       })
       .catch((error) => {
