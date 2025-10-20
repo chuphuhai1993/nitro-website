@@ -242,7 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load post detail (for article-detail.html)
   function loadPostDetail() {
     const postDetail = document.getElementById('post-detail');
-    if (!postDetail) return;
+    if (!postDetail) {
+      console.error("post-detail element not found");
+      return;
+    }
 
     // Lấy slug từ URL, loại bỏ các phần thừa
     const pathParts = window.location.pathname.split('/');
@@ -251,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!slug) {
       postDetail.innerHTML = 'Bài viết không tồn tại.';
+      console.log("No slug found in URL");
       return;
     }
 
