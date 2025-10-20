@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log("Trang chủ nitro.com loaded - DOM ready");
 
   const firebaseConfig = {
-    apiKey: "AIzaSyAz_ck88CPTERdVZgjWvJm7MCMBbMlyq_Y",
-    authDomain: "nitro-website-5b791.firebaseapp.com",
-    projectId: "nitro-website-5b791",
-    storageBucket: "nitro-website-5b791.firebasestorage.app",
-    messagingSenderId: "994553595303",
-    appId: "1:994553595303:web:ba1988b21ffc0f13366282",
+      apiKey: "AIzaSyAz_ck88CPTERdVZgjWvJm7MCMBbMlyq_Y",
+      authDomain: "nitro-website-5b791.firebaseapp.com",
+      projectId: "nitro-website-5b791",
+      storageBucket: "nitro-website-5b791.firebasestorage.app",
+      messagingSenderId: "994553595303",
+      appId: "1:994553595303:web:ba1988b21ffc0f13366282",
   };
 
   // Initialize Firebase
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
           postElement.className = 'bg-white p-4 rounded shadow mb-4';
           postElement.innerHTML = `
             <h3 class="text-xl font-bold mb-2">
-              <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
+              <a href="${window.location.origin}/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
             </h3>
             <p class="text-gray-700 mb-2">${post.description}</p>
             <p class="text-sm text-gray-500">Tác giả: ${post.author}</p>
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
           postElement.innerHTML = `
             <div>
               <h3 class="text-xl font-bold mb-2">
-                <a href="/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
+                <a href="${window.location.origin}/nitro-website/articles/${post.slug}" class="text-blue-600 hover:underline">${post.title}</a>
               </h3>
               <p class="text-gray-700">${post.description}</p>
             </div>
